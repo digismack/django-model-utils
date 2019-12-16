@@ -106,7 +106,11 @@ class InheritanceQuerySetMixin:
 
     def annotate(self, *args, **kwargs):
         qset = super().annotate(*args, **kwargs)
-        qset._annotated = [a.default_alias for a in args] + list(kwargs.keys())
+
+        if not hasattr(qset, '_annotated'):
+            qset._annotated = []
+
+        qset._annotated += [a.default_alias for a in args] + list(kwargs.keys())
         return qset
 
     def _get_subclasses_recurse(self, model, levels=None):
