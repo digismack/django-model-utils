@@ -1,7 +1,7 @@
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models, transaction, router
 from django.db.models.signals import post_save, pre_save
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from model_utils.fields import (
     AutoCreatedField,
@@ -27,6 +27,16 @@ class TimeStampedModel(models.Model):
     """
     created = AutoCreatedField(_('created'))
     modified = AutoLastModifiedField(_('modified'))
+
+    def save(self, *args, **kwargs):
+        """
+        Overriding the save method in order to make sure that
+        modified field is updated even if it is not given as
+        a parameter to the update field argument.
+        """
+        if 'update_fields' in kwargs and 'modified' not in kwargs['update_fields']:
+            kwargs['update_fields'] += ['modified']
+        super().save(*args, **kwargs)
 
     class Meta:
         abstract = True
@@ -122,7 +132,8 @@ class SoftDeletableModel(models.Model):
     class Meta:
         abstract = True
 
-    objects = SoftDeletableManager()
+    objects = SoftDeletableManager(_emit_deprecation_warnings=True)
+    available_objects = SoftDeletableManager()
     all_objects = models.Manager()
 
     def delete(self, using=None, soft=True, *args, **kwargs):

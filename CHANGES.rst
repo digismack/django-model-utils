@@ -3,9 +3,15 @@ CHANGES
 
 4.0.1 (unreleased)
 ------------------
+- Update InheritanceQuerySetMixin to avoid querying too much tables
+- TimeStampedModel now automatically adds 'modified' field as an update_fields
+  parameter even if it is forgotten while using save()
 - `FieldTracker` now marks fields as not changed after `refresh_from_db`
 - `FieldTracker` now respects `update_fields` changed in overridden `save()`
   method
+- Replace ugettext_lazy with gettext_lazy to satisfy Django deprecation warning
+- Add available_objects manager to SoftDeletableModel and add deprecation
+  warning to objects manager.
 
 4.0.0 (2019-12-11)
 ------------------
