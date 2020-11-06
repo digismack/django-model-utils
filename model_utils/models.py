@@ -34,8 +34,12 @@ class TimeStampedModel(models.Model):
         modified field is updated even if it is not given as
         a parameter to the update field argument.
         """
-        if 'update_fields' in kwargs and 'modified' not in kwargs['update_fields']:
-            kwargs['update_fields'] += ['modified']
+        update_fields = kwargs.get('update_fields', None)
+        if update_fields is not None:
+            update_fields = set(update_fields)
+            if update_fields:
+                kwargs['update_fields'] = update_fields.union({'modified'})
+
         super().save(*args, **kwargs)
 
     class Meta:
@@ -66,6 +70,20 @@ class StatusModel(models.Model):
     """
     status = StatusField(_('status'))
     status_changed = MonitorField(_('status changed'), monitor='status')
+
+    def save(self, *args, **kwargs):
+        """
+        Overriding the save method in order to make sure that
+        status_changed field is updated even if it is not given as
+        a parameter to the update field argument.
+        """
+        if (
+            'update_fields' in kwargs
+            and 'status' in kwargs['update_fields']
+            and 'status_changed' not in kwargs['update_fields']
+        ):
+            kwargs['update_fields'] += ['status_changed']
+        super().save(*args, **kwargs)
 
     class Meta:
         abstract = True
