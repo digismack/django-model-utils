@@ -1,7 +1,13 @@
 CHANGES
 =======
 
-4.0.1 (unreleased)
+4.1.1 (2020-12-01)
+------------------
+- Applied `isort` to codebase (Refs GH-#402)
+- Fix `TypeError` in save when model inherits from both TimeStampModel
+  and StatusModel. (Fixes GH-465)
+
+4.1.0 (2020-11-29)
 ------------------
 - Update InheritanceQuerySetMixin to avoid querying too much tables
 - TimeStampedModel now automatically adds 'modified' field as an update_fields
@@ -12,11 +18,14 @@ CHANGES
 - Replace ugettext_lazy with gettext_lazy to satisfy Django deprecation warning
 - Add available_objects manager to SoftDeletableModel and add deprecation
   warning to objects manager.
-- Add support for `Django 3.1`
 - StatusModel now automatically adds 'status_changed' field during save as an
   update_fieldsparameter when 'status' is present in it to make sure it is not
   forgotten.
 - Update test requirements
+- Move tests to GitHub Actions: https://github.com/jazzband/django-model-utils/actions
+- Drop support for `Django 2.1`
+- Add support for `Python 3.9`
+- Add support for `Django 3.1`
 
 4.0.0 (2019-12-11)
 ------------------

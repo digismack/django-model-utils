@@ -1,13 +1,10 @@
 import warnings
 
-import django
 from django.core.exceptions import ObjectDoesNotExist
-from django.db import connection
-from django.db import models
+from django.db import connection, models
 from django.db.models.constants import LOOKUP_SEP
 from django.db.models.fields.related import OneToOneField, OneToOneRel
-from django.db.models.query import ModelIterable
-from django.db.models.query import QuerySet
+from django.db.models.query import ModelIterable, QuerySet
 from django.db.models.sql.datastructures import Join
 
 
@@ -96,18 +93,11 @@ class InheritanceQuerySetMixin:
         return super()._chain(**kwargs)
 
     def _clone(self, klass=None, setup=False, **kwargs):
-        if django.VERSION >= (2, 0):
-            qs = super()._clone()
-            for name in ['subclasses', '_annotated']:
-                if hasattr(self, name):
-                    setattr(qs, name, getattr(self, name))
-            return qs
-
+        qs = super()._clone()
         for name in ['subclasses', '_annotated']:
             if hasattr(self, name):
-                kwargs[name] = getattr(self, name)
-
-        return super()._clone(**kwargs)
+                setattr(qs, name, getattr(self, name))
+        return qs
 
     def annotate(self, *args, **kwargs):
         qset = super().annotate(*args, **kwargs)
